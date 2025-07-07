@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Server IP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Server's IP</h1>
+  <p id="ip">Loading...</p>
+
+  <script>
+    async function getServerIP() {
+      const hostname = window.location.hostname;
+
+      try {
+        const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${hostname}&type=A`, {
+          headers: {
+            'accept': 'application/dns-json'
+          }
+        });
+        const data = await res.json();
+        const ip = data.Answer?.find(ans => ans.type === 1)?.data;
+        document.getElementById('ip').textContent = ip
+          ? `IP Address of ${hostname}: ${ip}`
+          : `No IP address found for ${hostname}`;
+      } catch (e) {
+        document.getElementById('ip').textContent = 'Failed to fetch IP address.';
+      }
+    }
+
+    getServerIP();
+  </script>
+</body>
+</html>
